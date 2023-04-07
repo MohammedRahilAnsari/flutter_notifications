@@ -12,14 +12,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   ///Creating instance for Notification Services.
   NotificationService notificationService = NotificationService();
-
+  String? token;
   ///Once user is in homepage of the app they'll get permission request for Notification.
   @override
   void initState() {
     super.initState();
+    getNotificationInitialized();
+  }
+
+  getNotificationInitialized() async{
     notificationService.requestNotificationPermission();
-    notificationService.getDeviceToken();
-    notificationService.getRefreshToken();
+    token =  await notificationService.getDeviceToken();
+    // if(token!.isNotEmpty){
+    // notificationService.getRefreshToken();
+    // }
+    notificationService.isAppInNotificationInit();
   }
 
   @override

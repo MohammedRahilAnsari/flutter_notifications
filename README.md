@@ -63,3 +63,12 @@ Right click on [ios] folder and select open in finder -> open ios folder and the
 2. Follow the [NotificationService] class for detail guidance.
 3. Created instance of [NotificationService] class in Homepage.dart.
 
+## Adding In App Notification [Foreground Notification]
+
+1. Add Meta in Android [Manifest] file.
+2. We have to Initialize [flutter_local_notification] plugin, this plugin will take care of user interface of notification.
+3. Create [inAppNotificationInit] method which will read the notification and update UI. (This is a Stream).
+
+## Adding background Notification 
+
+1. To add support for background notification, simply copy and paste entry point code available in main.dart.
