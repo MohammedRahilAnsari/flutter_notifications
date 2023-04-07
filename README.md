@@ -51,3 +51,15 @@ Right click on [ios] folder and select open in finder -> open ios folder and the
 7. Open [Terminal] and navigate to [IOS] folder. Type [cd ios] and hit Enter.
 8. As we did changes in [IOS] we have to update our Podfile, Type [pod update] in terminal and hit Enter. 
 
+## Initializing Firebase
+
+1. Go to [main.dart]
+2. Inside void main() function we have to bind our widget first before initializing anything. we can bind our widget by calling [WidgetsFlutterBinding.ensureInitialized()].
+3. Next is we will initialize our firebase by calling an async function [Firebase.initializeApp()].
+
+## Notification Service 
+
+1. We will separate our notification code by using [NotificationService] class.
+2. Follow the [NotificationService] class for detail guidance.
+3. Created instance of [NotificationService] class in Homepage.dart.
+
