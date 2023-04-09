@@ -72,3 +72,27 @@ Right click on [ios] folder and select open in finder -> open ios folder and the
 ## Adding background Notification 
 
 1. To add support for background notification, simply copy and paste entry point code available in main.dart.
+
+### To Add Notification support in IOS we have to go through some extra steps 
+
+1. copy and paste [GoogleService-Info.plist] which we'll get from [Firebase].
+2. open [AppDelegate.swift] and import [FirebaseCore].
+3. Initialise config inside [Bool{}] by calling [Firebase.configure()] and done.
+4. Now open [IOS] app setup in console scroll below in [cloud messaging] tab,
+   notice it's asking of APNs keys and certificates, we have to create these certificate.
+5. Open [keychain] in mac -> click on [Keychain Access] in toolbar -> [Certificate Assistant] ->
+   [Request a certificate From a Certificate Authority].
+6. Enter details [email must match with the app console email id] common name [name of your app] and select [saved to disk] and continue.
+7. Open [developer.apple.com/account/resources/certificates/list] after login into your dev account.
+8. click on plus icon near certificate text.
+9. select [Apple Push Notification service SSL (sandbox & production)], scroll up and click on continue.
+10. select [App ID:] from the dropdown, to find specific app remember your app bundle name, and click continue.
+11. On this screen add the keychain certificate which we created. once selected click continue.
+12. Download the certificate, open in finder and double click on it.
+13. Open Keychain and go to certificate tab, open dropdown and select certificate and private key. [see the file type in kind tab].
+14. right click or double click on it and select [Export 2 items...], this will generate [.p12] file and save it. [Always Remember password as it'll be ask at the time of uploading certificate]
+15. Open firebase console -> cloud messaging -> scroll all the way to ios app inside [Apn certificate].
+16. Click on [upload] where hint text say [No development APNs certificate] and upload [.p12] file here.
+17. open ios project in xcode -> select runner -> click on [+ Capability] search and add [Push Notifications].
+
+

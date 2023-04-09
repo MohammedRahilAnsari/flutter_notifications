@@ -4,6 +4,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_notification/screens/home_screen.dart';
+import 'package:flutter_notification/screens/second_screen.dart';
 
 class NotificationService {
   /// Initializing Firebase Messaging package.
@@ -51,7 +53,7 @@ class NotificationService {
   Future<String> getDeviceToken() async {
     String? token = await firebaseMessaging.getToken();
     debugPrint('token $token');
-    return token??'';
+    return token ?? '';
   }
 
   ///Token can be change due to some reason,
@@ -68,7 +70,7 @@ class NotificationService {
 
   ///This function will help us to initialize [flutter_local_notification] and handle both [android] & [ios] notification,
   ///This method need [context] to show UI and [remoteMessage] which is coming from firebase notification
-  void localNotificationInit() async {
+  void localNotificationInit(BuildContext context, RemoteMessage message) async {
     ///Update your notification Icons by changing below string value
     // var defaultIcon = ;
 
@@ -83,18 +85,37 @@ class NotificationService {
     ///Initializing [flutter_local_notification] ,
     ///Payload - payload is data coming from remoteMessage [firebase notification message],
     ///Which will help us to set data in notification ui.
+    ///[onDidReceiveNotificationResponse] help us to add navigation,
+    ///Below code will execute in foreground
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (payload) {},
+      onDidReceiveNotificationResponse: (payload) {
+        ///if we tap on notification it'll redirect us to the respective page.
+        handleMessage(context: context, payload: message);
+      },
     );
   }
 
   ///Foreground App Notification
-  void isAppInNotificationInit() {
+  void foregroundNotification() {
     FirebaseMessaging.onMessage.listen((message) {
       debugPrint(message.notification?.title);
       debugPrint(message.notification?.body);
       showNotification(message);
+    });
+  }
+
+  Future<void> backgroundNotification(BuildContext context) async {
+    ///When app is terminated from background
+    RemoteMessage? terminatedNotificationMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if(terminatedNotificationMessage != null){
+      handleMessage(context: context, payload: terminatedNotificationMessage);
+    }
+
+    ///when app is in background
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      handleMessage(context: context, payload: message);
     });
   }
 
@@ -112,16 +133,8 @@ class NotificationService {
     );
 
     ///Notifications Details
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-      androidNotificationChannel.id,
-      androidNotificationChannel.name,
-      channelDescription: 'channelDescription',
-      playSound: true,
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-      icon: '@mipmap/ic_launcher'
-    );
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(androidNotificationChannel.id, androidNotificationChannel.name,
+        channelDescription: 'channelDescription', playSound: true, importance: Importance.max, priority: Priority.high, ticker: 'ticker', icon: '@mipmap/ic_launcher');
 
     ///IOS channel and Notification Details
     DarwinNotificationDetails darwinNotificationDetails = const DarwinNotificationDetails(
@@ -149,3 +162,9 @@ class NotificationService {
   }
 }
 
+///This will help us to navigate using notification
+void handleMessage({required BuildContext context, required RemoteMessage payload}) {
+  if (payload.data['type'] == 'msj') {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen())).then((value) => const SecondScreen());
+  }
+}

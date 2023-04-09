@@ -26,7 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // if(token!.isNotEmpty){
     // notificationService.getRefreshToken();
     // }
-    notificationService.isAppInNotificationInit();
+    notificationService.foregroundNotification();
+    notificationService.backgroundNotification(context);
   }
 
   @override
